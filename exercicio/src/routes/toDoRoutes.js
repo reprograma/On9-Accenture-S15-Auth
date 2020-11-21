@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const toDoControllers = require('../controllers/toDoController');
-//const authMiddlewares = require('../middlewares/auth')
+const authMiddlewares = require('../middlewares/auth');
 
 
 
@@ -38,9 +38,7 @@ router.post('/cadastro', toDoControllers.createTask);
 
 
 /* ============== MIDDLEWARE ==============*/
-
-//router.use(authMiddlewares)
-
+router.use(authMiddlewares)
 
 //@route PUT
 //@desc Atualizar uma tarefa, selecionando-a pelo seu ID
