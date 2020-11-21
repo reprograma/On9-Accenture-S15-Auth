@@ -37,7 +37,7 @@ const accessToken = async (request, response) => {
             })
             .catch((e) => {
                 return response.status(401).json({
-                    message: `Sorry! The Colaborator's name that you are looking for wasn't found in out database`
+                    message: `Sorry! The Colaborator's name that you are looking for wasn't found in our database`
                 })
             })
 
