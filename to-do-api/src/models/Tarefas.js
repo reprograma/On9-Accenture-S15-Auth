@@ -7,6 +7,7 @@ const userSchema = new Schema(
     concluido: { type: Boolean, default: false },
     descricao: String,
     nomeColaborador: { type: String, require: true },
+    hashPass: String,
   },
   { timestamps: true }
 ); //data de criação e atualização

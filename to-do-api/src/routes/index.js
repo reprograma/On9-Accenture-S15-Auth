@@ -7,7 +7,7 @@ router.get("/", function (request, response) {
     //manda status 200 e enviando um objeto
     titulo: "Projeto To-Do Turma On9",
     versao: "1.0.0",
-    mensagem: "Analu é demais",
+    mensagem: "Luana está aprendendo muito.",
   });
 });
 

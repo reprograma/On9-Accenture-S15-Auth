@@ -1,42 +1,49 @@
 const { response, request } = require("express");
 const mongoose = require("mongoose");
 const Task = require("../models/Tarefas");
+const bcrypt = require("bcrypt");
+const bcryptSalt = 8; 
 
-const tarefasModels = require("../models/tarefas.json");
+//const tarefasModels = require("../models/tarefas.json");
 
-const getAll = (request, response) => {
+exports.getAll = (request, response, next) => {
   //response.status(200).send(tarefasModels)
-  Task.find()
-    .then((tasks) => {
+  Task.find().then((tasks) => {
       response.status(200).json(tasks);
     })
     .catch((err) => next(err));
 };
 
-const getById = (request, response) => {
-  const { id } = request.params;
-
+exports.getById = (request, response) => {
+  const id = request.params.id
   Task.findById(id)
     .then((tasks) => {
-      response.status(200).json(tasks);
-    })
-    .catch((err) => next(err));
+      res.status(200).json(tasks);
+  })
+  .catch(err => next(err));
 };
 
-const criarTarefa = (request, response) => {
-  let { descricao, nomeColaborador } = request.body;
+exports.criarTarefa = (request, response, next) => {
+  const { descricao, nomeColaborador } = request.body;
+  const salt = bcrypt.genSaltSync(bcrypt);
+  try{
+    const hashPass = await bcrypt.hashSync(password, salt);
+    const newTask = new Task({
+      descricao,
+      nomeColaborador,
+    });
+  
+    newTask.save()
+      .then((res) => {
+        response.status(201).json(res);
+      })
+      .catch((err) => next(err));
+  } catch (e) {
+    return response.status(401).json({err: 'erro'});
+  }
+}
 
-  const newTask = new Task({
-    descricao,
-    nomeColaborador,
-  });
-
-  newTask
-    .save()
-    .then((res) => {
-      response.status(201).json(res);
-    })
-    .catch((err) => next(err));
+  
 
   /**    const novaTarefa ={
         id: Math.random().toString(32).substr(2,9),
@@ -51,25 +58,21 @@ const criarTarefa = (request, response) => {
     response.status(201).json(novaTarefa)*/
 };
 
-const getConcluidas = (request, response) => {
-  Task.find({ concluido: true })
-
-    .then((tasks) => {
+exports.getConcluidas = (request, response) => {
+  Task.find({ concluido: true }).then((tasks) => {
       response.status(200).json(tasks);
     })
     .catch((err) => next(err));
 };
 
-const getPendentes = (request, response) => {
-  Task.find({ concluido: false })
-
-    .then((tasks) => {
+exports.getPendentes = (request, response) => {
+  Task.find({ concluido: false }).then((tasks) => {
       response.status(200).json(tasks);
     })
     .catch((err) => next(err));
 };
 
-const atualizarTarefa = (request, response) => {
+exports.atualizarTarefa = (request, response) => {
   const { id } = request.params; //pega o ID na URL
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -107,7 +110,7 @@ const atualizarTarefa = (request, response) => {
     response.status(200).json(tarefasModels[index])*/
 };
 
-const concluirTarefa = (request, response) => {
+exports.concluirTarefa = (request, response) => {
   const { id } = request.params; //pegando o valor do ID mandado na URL
   const { concluido } = request.body; //pegando o valor de "concluido" enviado no Body
 
@@ -131,7 +134,7 @@ const concluirTarefa = (request, response) => {
     })*/
 };
 
-const alterarResponsavel = (request, response) => {
+exports.alterarResponsavel = (request, response) => {
   const { id } = request.params; //coletando o valor do ID que foi inserido na URL
   const { nomeColaborador } = request.body; //coletando o valor de colaborador que foi inserido no body
 
@@ -146,7 +149,7 @@ const alterarResponsavel = (request, response) => {
     });
 };
 
-const deletarTarefa = (request, response) => {
+exports.deletarTarefa = (request, response) => {
   const { id } = request.params;
 
   Task.findByIdAndDelete(id)
@@ -164,6 +167,7 @@ const deletarTarefa = (request, response) => {
     response.json({mensagem: "Tarefa deletada com sucesso"})*/
 };
 
+/** 
 module.exports = {
   getAll,
   getById,
@@ -174,4 +178,4 @@ module.exports = {
   alterarResponsavel,
   atualizarTarefa,
   concluirTarefa,
-};
+};*/
