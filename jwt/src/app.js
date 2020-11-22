@@ -2,7 +2,7 @@ const express = require("express")
 const app = express()
 
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/reprograma', 
+mongoose.connect('mongodb://localhost/ToDoList', 
 {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -10,7 +10,7 @@ mongoose.connect('mongodb://localhost/reprograma',
 
 //rotas
 const index = require("./routes/index")
-const alunas = require("./routes/alunasRoute")
+const tarefa = require("./routes/tarefaRoute")
 const sessions = require("./routes/sessionRoute")
 
 
@@ -26,7 +26,7 @@ app.use(function(req, res, next) {
 })
 
 app.use("/", index)
-app.use("/alunas", alunas)
+app.use("/tarefa", tarefa)
 app.use("/sessions", sessions)
 
 module.exports = app
