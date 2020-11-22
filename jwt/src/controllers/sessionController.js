@@ -1,46 +1,43 @@
-const jwt = require('jsonwebtoken');
-const authConfig = require ('../config/auth');
+const jwt = require("jsonwebtoken");
+const authConfig = require("../config/auth");
 const bcrypt = require("bcrypt");
-const Alunas = require('../model/Alunas');
+const Task = require("../model/Tarefa");
 
 function checkPassword(passwordEntry, password) {
   return bcrypt.compareSync(passwordEntry, password);
 }
 
-exports.accessToken = (req, res) => {
+exports.accessToken = (request, response) => {
   try {
-    const { name, password: passwordEntry } = req.body;
-      
-    Alunas.findOne({nome: name})
+    const { nomeColaborador, password: passwordEntry } = request.body;
+    Task.findOne({ nomeColaborador: nomeColaborador})
       .then((user) => {
-          const {id, nome, hashPass } = user;
+        const { id, nomeColaborador, hashPass } = user;
 
-          try {
-            checkPassword(passwordEntry, hashPass);
-          } catch(e) {
-            return res.status(401).json({ error: 'password does not match' });
-          }
+        try {
+          checkPassword(passwordEntry, hashPass);
+        } catch (e) {
+          return response.status(401).json({ error: "Senha incorreta." });
+        }
 
-          try {
-            return res.json({
-              user: {
-                id,
-                nome,
-              },
-              token: jwt.sign({ id }, authConfig.secret, {
-                expiresIn: authConfig.expiresIn,
-              }),
-            });
-          } catch (e) {
-            return res.status(401).json({ error: 'erro' });
-          }
-
+        try {
+          return response.json({
+            user: {
+              id,
+              nomeColaborador,
+            },
+            token: jwt.sign({ id }, authConfig.secret, {
+              expiresIn: authConfig.expiresIn,
+            }),
+          });
+        } catch (e) {
+          return response.status(401).json({ error: "erro" });
+        }
       })
       .catch((e) => {
-        return res.status(401).json({ error: 'user not found' });
+        return response.status(401).json({ error: "Collaborato não encontrado." });
       });
-
   } catch (e) {
-    return res.status(401).json({ error: 'erro' });
+    return response.status(401).json({ error: "erro" });
   }
-}
+}; 
